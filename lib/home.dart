@@ -124,7 +124,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             const SliverToBoxAdapter(
               child: SizedBox(height: 20,),
             ),
-            
             notes.isEmpty ? 
             SliverToBoxAdapter(
               child: 
@@ -152,12 +151,40 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               return 
               Dismissible(
                 key: Key("${notes[index].dateTime}|${notes[index].title}|${notes[index].characters}"),
-                onDismissed: (_) {
-                  setState(() {
-                     notes.removeAt(_idRemove);
-                     _idRemove = -1;
-                     _progressRemove = 0;
-                  });
+                confirmDismiss: (direction) {
+                  return showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text("Advertencia 😬"),
+                        content: Text("¿Estás seguro de que deseas eliminar la nota \"${notes[index].title}\" "),
+                        actions: [
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              elevation: 0,
+                              backgroundColor: const Color.fromARGB(123, 158, 158, 158)
+                            ),
+                            onPressed: (){
+                              Navigator.of(context).pop(false);
+                            },
+                            child: const Text("Cancelar")),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              elevation: 0,
+                              backgroundColor: const Color.fromARGB(255, 255, 0, 0)
+                            ),
+                            onPressed: (){
+                            Navigator.of(context).pop(true);
+                            setState(() {
+                              notes.removeAt(_idRemove);
+                              _idRemove = -1;
+                              _progressRemove = 0;
+                            });
+                          }, child: Text("Eliminar")),
+                        ],
+                      );
+                    },
+                  );
                 },
                 onUpdate: (details) {
                   setState(() {

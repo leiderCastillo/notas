@@ -21,8 +21,8 @@ class _NewNoteState extends State<NewNote> {
   String _time = "";
   late DateTime _dateTime;
   //bool _keyboardActive = false;
-  TextEditingController _titleController = TextEditingController();
-  TextEditingController _contentController = TextEditingController();
+  TextEditingController titleController = TextEditingController();
+  TextEditingController contentController = TextEditingController();
 
   void getData(){
     if(notes.length <= widget.id){
@@ -31,30 +31,31 @@ class _NewNoteState extends State<NewNote> {
       DateFormat timeFormatter = DateFormat('h:mm a');
       _time =  "${dateFormatter.format(_dateTime)} ${timeFormatter.format(_dateTime)} ";
       _numCharacters = 0;
-      _titleController.clear();
-      _contentController.clear();
+      titleController.clear();
+      contentController.clear();
     }else{
       _time = notes[widget.id].dateTimeText;
       _numCharacters = notes[widget.id].characters;
-      _contentController.text = notes[widget.id].content;
-      _titleController.text = notes[widget.id].title;
+      contentController.text = notes[widget.id].content;
+      titleController.text = notes[widget.id].title;
     }
   }
 
   void setData(){
+    _numCharacters = titleController.text.length + contentController.text.length;
     if(notes.length <= widget.id){
       notes.add(
         Note(
-          title: _titleController.text,
-          content: _contentController.text,
+          title: titleController.text,
+          content: contentController.text,
           dateTime: _dateTime,
           dateTimeText: _time,
           characters: _numCharacters
         )
       );
     }else{
-      notes[widget.id].content = _contentController.text;
-      notes[widget.id].title = _titleController.text;
+      notes[widget.id].content = contentController.text;
+      notes[widget.id].title = titleController.text;
     }
     setState(() { });
   }
@@ -84,7 +85,7 @@ class _NewNoteState extends State<NewNote> {
         padding: const EdgeInsets.fromLTRB(20,5,20,10),
         children: [
           TextField(
-            controller: _titleController,
+            controller: titleController,
             style: TextStyle(fontWeight: FontWeight.bold,fontSize: Style.fontTitleSize),
             decoration: const InputDecoration(  
               border: InputBorder.none,
@@ -94,7 +95,7 @@ class _NewNoteState extends State<NewNote> {
           ),
           Text("$_time | $_numCharacters caracteres",textScaleFactor: 0.8, style: const TextStyle(color: Colors.grey)),
           TextField(
-            controller: _contentController,
+            controller: contentController,
             maxLines: null,
             decoration: const InputDecoration(  
               border: InputBorder.none,
